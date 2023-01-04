@@ -1,13 +1,12 @@
-import { Button, Input, Space, Table } from 'antd';
-import axios from 'axios';
+import { Table } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { FilterOutlined } from '@ant-design/icons';
+import { httpClient } from '../common/httpClient';
+import { SightingsFilter } from './SightingsFilter';
 
 export function SightingsTable() {
   const [sightings, setSightings] = useState([]);
-  const [yearFilter, setYearFilter] = useState('');
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const SIGHTINGS_COLUMNS = useMemo(
     () => [
@@ -46,8 +45,8 @@ export function SightingsTable() {
   );
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3000/sightings', {
+    httpClient
+      .get('/sightings', {
         params: searchParams
       })
       .then(({ data }) => setSightings(data));
@@ -55,23 +54,7 @@ export function SightingsTable() {
 
   return (
     <>
-      <Space>
-        <Input
-          placeholder="Year"
-          value={yearFilter}
-          onChange={({ target }) => setYearFilter(target.value)}
-        />
-
-        <Button
-          icon={<FilterOutlined />}
-          onClick={() => {
-            setSearchParams({
-              ...searchParams,
-              year: yearFilter
-            });
-          }}
-        />
-      </Space>
+      <SightingsFilter />
 
       <Table
         dataSource={sightings}

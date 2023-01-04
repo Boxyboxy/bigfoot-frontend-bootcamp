@@ -1,16 +1,15 @@
 import { Form, Input } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { BACKEND_URL } from '../configs';
+import { httpClient } from '../common/httpClient';
 
 export function SightingPage() {
   const [sighting, setSighting] = useState({});
   const { reportNumber } = useParams();
 
   useEffect(() => {
-    axios.get(`${BACKEND_URL}/sightings/${reportNumber}`).then(({ data }) => setSighting(data));
+    httpClient.get(`/sightings/${reportNumber}`).then(({ data }) => setSighting(data));
   }, [reportNumber]);
 
   return (
