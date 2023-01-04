@@ -6,7 +6,7 @@ import { SightingsFilter } from './SightingsFilter';
 
 export function SightingsTable() {
   const [sightings, setSightings] = useState([]);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const SIGHTINGS_COLUMNS = useMemo(
     () => [
@@ -27,6 +27,14 @@ export function SightingsTable() {
         dataIndex: 'DATE',
         key: 'DATE',
         width: 180
+      },
+      {
+        title: 'Report Number',
+        dataIndex: 'REPORT_NUMBER',
+        key: 'REPORT_NUMBER',
+        width: 100,
+        sortDirections: ['ascend', 'descend'],
+        sorter: () => null
       },
       {
         title: 'Observation',
@@ -60,6 +68,15 @@ export function SightingsTable() {
         dataSource={sightings}
         columns={SIGHTINGS_COLUMNS}
         rowKey={(record) => record.REPORT_NUMBER}
+        onChange={(pagination, filters, { order, field }) => {
+          const newParams = {};
+          for (const [key, value] of searchParams) {
+            newParams[key] = value;
+          }
+          if (!order) delete newParams.sort;
+          else newParams.sort = [`${field.toLowerCase()}:${order}`];
+          setSearchParams(newParams);
+        }}
       />
     </>
   );
