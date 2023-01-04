@@ -1,20 +1,16 @@
-import React from "react";
-import logo from "./logo.png";
-import "./App.css";
+import React from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { SightingPage } from './sightings/SightingPage';
+import { SightingsTable } from './sightings/SightingsTable';
 
-class App extends React.Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-        </header>
-      </div>
-    );
-  }
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/sightings" element={<SightingsTable />} />
+        <Route path="/sightings/:reportNumber" element={<SightingPage />} />
+        <Route path="*" element={<Navigate to="/sightings" />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
-
-export default App;
