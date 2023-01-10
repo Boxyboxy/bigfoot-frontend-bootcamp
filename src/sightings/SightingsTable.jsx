@@ -3,10 +3,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { httpClient } from '../common/httpClient';
 import { SightingsFilter } from './SightingsFilter';
+import { withPadding } from '../common/hocs';
 
 export function SightingsTable() {
   const [sightings, setSightings] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [isLoading, setIsLoading] = useState(false);
 
   const SIGHTINGS_COLUMNS = useMemo(
     () => [
@@ -53,14 +55,16 @@ export function SightingsTable() {
   );
 
   useEffect(() => {
+    setIsLoading(true);
     httpClient
       .get('/sightings', {
         params: searchParams
       })
-      .then(({ data }) => setSightings(data));
+      .then(({ data }) => setSightings(data))
+      .finally(() => setIsLoading(false));
   }, [searchParams]);
 
-  return (
+  return withPadding(
     <>
       <SightingsFilter />
 
@@ -68,6 +72,7 @@ export function SightingsTable() {
         dataSource={sightings}
         columns={SIGHTINGS_COLUMNS}
         rowKey={(record) => record.REPORT_NUMBER}
+        loading={isLoading}
         onChange={(pagination, filters, { order, field }) => {
           const newParams = {};
           for (const [key, value] of searchParams) {

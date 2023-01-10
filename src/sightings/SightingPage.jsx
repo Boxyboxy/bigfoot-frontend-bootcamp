@@ -1,34 +1,63 @@
-import { Form, Input } from 'antd';
+import { Button, Form, Input, Skeleton, Space } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { httpClient } from '../common/httpClient';
+import { notification } from 'antd';
+import { withPadding } from '../common/hocs';
 
 export function SightingPage() {
   const [sighting, setSighting] = useState({});
   const { reportNumber } = useParams();
+  const [api, notificationContext] = notification.useNotification();
+  const [isInvalidSighting, setInvalidSighting] = useState(false);
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    httpClient.get(`/sightings/${reportNumber}`).then(({ data }) => setSighting(data));
+    setIsLoading(true);
+    httpClient
+      .get(`/sightings/${reportNumber}`)
+      .then(({ data }) => setSighting(data))
+      .catch((err) => {
+        setInvalidSighting(true);
+        api.error({
+          message: err?.response?.data?.error || err?.message,
+          placement: 'top',
+          duration: 2
+        });
+      })
+      .finally(() => setIsLoading(false));
+    console.log(isLoading);
   }, [reportNumber]);
 
-  return (
+  return withPadding(
     <Form layout="horizontal">
-      <Form.Item label="Year">
-        <Input value={sighting.YEAR} />
-      </Form.Item>
-
-      <Form.Item label="Month">
-        <Input value={sighting.MONTH} />
-      </Form.Item>
-
-      <Form.Item label="Date">
-        <Input value={sighting.DATE} />
-      </Form.Item>
+      {notificationContext}
+      {['Year', 'Month', 'Date'].map((label) => (
+        <Form.Item label={label} key={label}>
+          {isLoading ? (
+            <Skeleton.Input key={label} block active />
+          ) : (
+            <Input value={sighting[label]} disabled={isInvalidSighting} />
+          )}
+        </Form.Item>
+      ))}
 
       <Form.Item label="Description">
-        <TextArea value={sighting.OBSERVED} rows={8} />
+        {isLoading ? (
+          <Skeleton.Input block active style={{ height: '186px' }} />
+        ) : (
+          <TextArea value={sighting.OBSERVED} rows={8} disabled={isInvalidSighting} />
+        )}
       </Form.Item>
+
+      <Space>
+        <Button type="primary" disabled>
+          Edit
+        </Button>
+        <Button onClick={() => navigate(-1)}>Back</Button>
+      </Space>
     </Form>
   );
 }

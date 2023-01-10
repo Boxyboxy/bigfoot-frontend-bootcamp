@@ -13,15 +13,14 @@ export function SightingsFilter() {
       onFinish={({ year }) => {
         setSearchParams({ ...searchParams, year });
       }}
-      validateTrigger="onSubmit">
+      validateTrigger="onSubmit"
+      style={{ justifyContent: 'flex-end', marginBottom: '1rem' }}>
       <Form.Item rules={[{ required: true, message: 'Year is required' }]} name="year">
         <Input placeholder="Year" />
       </Form.Item>
-
       <Form.Item>
         <Button icon={<FilterOutlined />} htmlType="submit" />
       </Form.Item>
-
       <Form.Item>
         <Button
           onClick={() => {
