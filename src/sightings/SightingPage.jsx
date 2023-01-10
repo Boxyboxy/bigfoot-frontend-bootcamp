@@ -1,6 +1,6 @@
 import { Button, Form, Input, Skeleton, Space } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { httpClient } from '../common/httpClient';
 import { notification } from 'antd';
@@ -13,6 +13,15 @@ export function SightingPage() {
   const [isInvalidSighting, setInvalidSighting] = useState(false);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+
+  const labelMapping = useMemo(
+    () => ({
+      Year: 'YEAR',
+      Month: 'MONTH',
+      Date: 'DATE'
+    }),
+    []
+  );
 
   useEffect(() => {
     setIsLoading(true);
@@ -39,7 +48,7 @@ export function SightingPage() {
           {isLoading ? (
             <Skeleton.Input key={label} block active />
           ) : (
-            <Input value={sighting[label]} disabled={isInvalidSighting} />
+            <Input value={sighting[labelMapping[label]]} disabled={isInvalidSighting} />
           )}
         </Form.Item>
       ))}
