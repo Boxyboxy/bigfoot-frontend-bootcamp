@@ -43,6 +43,14 @@ export function SightingPage() {
   return withPadding(
     <Form layout="horizontal">
       {notificationContext}
+      <Form.Item label={'Report Number'}>
+        {isLoading ? (
+          <Skeleton.Input block active />
+        ) : (
+          <Input value={sighting.REPORT_NUMBER} disabled />
+        )}
+      </Form.Item>
+
       {['Year', 'Month', 'Date'].map((label) => (
         <Form.Item label={label} key={label}>
           {isLoading ? (
