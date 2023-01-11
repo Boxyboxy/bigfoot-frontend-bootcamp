@@ -96,6 +96,13 @@ export function SightingsTable() {
         params
       })
       .then(({ data }) => setSightings(data))
+      .catch((err) => {
+        api.error({
+          message: err?.response?.data?.error || err?.message,
+          placement: 'top',
+          duration: 2
+        });
+      })
       .finally(() => setIsLoading(false));
   }, []);
 
