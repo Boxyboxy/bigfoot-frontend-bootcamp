@@ -39,13 +39,19 @@ export function SightingsTable() {
         title: 'Date',
         dataIndex: 'date',
         key: 'date',
-        width: 180
+        width: 120
       },
       {
         title: 'Observation',
         dataIndex: 'observed',
         key: 'observed',
         ellipsis: true
+      },
+      {
+        title: 'Location',
+        dataIndex: 'location',
+        key: 'location',
+        width: 180
       },
       {
         title: 'Action',

@@ -7,7 +7,8 @@ export function SightingForm({ form, isLoading, children, ...props }) {
     () => ({
       Year: 'year',
       Month: 'month',
-      Date: 'date'
+      Date: 'date',
+      Location: 'location'
     }),
     []
   );
@@ -25,7 +26,7 @@ export function SightingForm({ form, isLoading, children, ...props }) {
         )}
       </Form.Item>
 
-      {['Year', 'Month', 'Date'].map((label) => (
+      {Object.keys(labelMapping).map((label) => (
         <Form.Item label={label} key={label} name={labelMapping[label]}>
           {isLoading ? (
             <Skeleton.Input key={label} block active />
