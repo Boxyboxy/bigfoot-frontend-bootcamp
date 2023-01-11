@@ -14,40 +14,40 @@ export function SightingsTable() {
     () => [
       {
         title: 'Year',
-        dataIndex: 'YEAR',
-        key: 'YEAR',
+        dataIndex: 'year',
+        key: 'year',
         width: 100
       },
       {
         title: 'Month',
-        dataIndex: 'MONTH',
-        key: 'MONTH',
+        dataIndex: 'month',
+        key: 'month',
         width: 120
       },
       {
         title: 'Date',
-        dataIndex: 'DATE',
-        key: 'DATE',
+        dataIndex: 'date',
+        key: 'date',
         width: 180
       },
       {
         title: 'Report Number',
-        dataIndex: 'REPORT_NUMBER',
-        key: 'REPORT_NUMBER',
+        dataIndex: 'report_number',
+        key: 'report_number',
         width: 100,
         sortDirections: ['ascend', 'descend'],
         sorter: () => null
       },
       {
         title: 'Observation',
-        dataIndex: 'OBSERVED',
-        key: 'OBSERVED',
+        dataIndex: 'observed',
+        key: 'observed',
         ellipsis: true
       },
       {
         title: 'Action',
         key: 'ACTION',
-        render: (_, record) => <Link to={`/sightings/${record.REPORT_NUMBER}`}>View</Link>,
+        render: (_, record) => <Link to={`/sightings/${record.report_number}`}>View</Link>,
         width: 100
       }
     ],
@@ -71,7 +71,7 @@ export function SightingsTable() {
       <Table
         dataSource={sightings}
         columns={SIGHTINGS_COLUMNS}
-        rowKey={(record) => record.REPORT_NUMBER}
+        rowKey={(record) => record.report_number}
         loading={isLoading}
         onChange={(pagination, filters, { order, field }) => {
           const newParams = {};

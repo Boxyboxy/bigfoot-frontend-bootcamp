@@ -16,9 +16,9 @@ export function SightingPage() {
 
   const labelMapping = useMemo(
     () => ({
-      Year: 'YEAR',
-      Month: 'MONTH',
-      Date: 'DATE'
+      Year: 'year',
+      Month: 'month',
+      Date: 'date'
     }),
     []
   );
@@ -47,7 +47,7 @@ export function SightingPage() {
         {isLoading ? (
           <Skeleton.Input block active />
         ) : (
-          <Input value={sighting.REPORT_NUMBER} disabled />
+          <Input value={sighting.report_number} disabled />
         )}
       </Form.Item>
 
@@ -65,7 +65,7 @@ export function SightingPage() {
         {isLoading ? (
           <Skeleton.Input block active style={{ height: '186px' }} />
         ) : (
-          <TextArea value={sighting.OBSERVED} rows={8} disabled={isInvalidSighting} />
+          <TextArea value={sighting.observed} rows={8} disabled={isInvalidSighting} />
         )}
       </Form.Item>
 
