@@ -1,10 +1,15 @@
 import { Button, Form, Input } from 'antd';
 import { useSearchParams } from 'react-router-dom';
 import { FilterOutlined } from '@ant-design/icons';
+import { useEffect } from 'react';
 
 export function SightingsFilter() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    form.setFieldValue('year', searchParams.get('year'));
+  }, [searchParams]);
 
   return (
     <Form

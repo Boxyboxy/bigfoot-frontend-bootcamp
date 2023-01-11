@@ -1,17 +1,18 @@
-import { Button, notification, Popconfirm, Space, Table, Tooltip } from 'antd';
+import { Button, Popconfirm, Space, Table, Tooltip } from 'antd';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { httpClient } from '../../common/httpClient';
 import { SightingsFilter } from '../components/SightingsFilter';
 import { withPadding } from '../../common/hocs';
 import { DeleteOutlined, SearchOutlined } from '@ant-design/icons';
+import { useNotification } from '../../common/hooks/useNotification';
 
 export function SightingsTable() {
   const [sightings, setSightings] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const [api, notificationContext] = notification.useNotification();
+  const { notify, notifyContext } = useNotification();
 
   const SIGHTINGS_COLUMNS = useMemo(
     () => [
@@ -52,7 +53,7 @@ export function SightingsTable() {
         title: 'Location',
         dataIndex: 'location',
         key: 'location',
-        width: 180
+        width: 100
       },
       {
         title: 'Action',
@@ -96,13 +97,7 @@ export function SightingsTable() {
         params
       })
       .then(({ data }) => setSightings(data))
-      .catch((err) => {
-        api.error({
-          message: err?.response?.data?.error || err?.message,
-          placement: 'top',
-          duration: 2
-        });
-      })
+      .catch((err) => notify('error', err?.response?.data?.error || err?.message))
       .finally(() => setIsLoading(false));
   }, []);
 
@@ -110,20 +105,10 @@ export function SightingsTable() {
     setIsLoading(true);
     return httpClient
       .delete(`/sightings/${reportNumber}`)
-      .then(() => {
-        api.success({
-          message: `Successfully deleted sighting with report number ${reportNumber}`,
-          placement: 'top',
-          duration: 2
-        });
-      })
-      .catch((err) => {
-        api.error({
-          message: err?.response?.data?.error || err?.message,
-          placement: 'top',
-          duration: 2
-        });
-      })
+      .then(() =>
+        notify('success', `Successfully deleted sighting with report number ${reportNumber}`)
+      )
+      .catch((err) => notify('error', err?.response?.data?.error || err?.message))
       .finally(() => setIsLoading(false));
   }, []);
 
@@ -133,7 +118,7 @@ export function SightingsTable() {
 
   return withPadding(
     <>
-      {notificationContext}
+      {notifyContext}
 
       <SightingsFilter />
 
