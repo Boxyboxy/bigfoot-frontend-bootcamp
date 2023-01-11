@@ -15,13 +15,13 @@ export function SightingForm({ form, isLoading, children, ...props }) {
 
   return (
     <Form layout="horizontal" form={form} {...props}>
-      <Form.Item label={'Report Number'} name="report_number">
+      <Form.Item label={'Report Number'} name="reportNumber">
         {isLoading ? (
           <Skeleton.Input block active />
         ) : (
           <Input
-            value={form.getFieldValue('report_number')}
-            disabled={!!form.getFieldValue('report_number') || props.disabled}
+            value={form.getFieldValue('reportNumber')}
+            disabled={!!form.getFieldValue('reportNumber') || props.disabled}
           />
         )}
       </Form.Item>

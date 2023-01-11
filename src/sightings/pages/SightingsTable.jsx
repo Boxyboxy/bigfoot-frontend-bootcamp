@@ -18,8 +18,8 @@ export function SightingsTable() {
     () => [
       {
         title: 'Report Number',
-        dataIndex: 'report_number',
-        key: 'report_number',
+        dataIndex: 'reportNumber',
+        key: 'reportNumber',
         width: 100,
         sortDirections: ['ascend', 'descend'],
         sorter: () => null
@@ -64,18 +64,18 @@ export function SightingsTable() {
               <Button
                 shape="circle"
                 icon={<SearchOutlined />}
-                onClick={() => navigate(`/sightings/${record.report_number}`)}
+                onClick={() => navigate(`/sightings/${record.reportNumber}`)}
               />
             </Tooltip>
 
             <Tooltip title="Delete">
               <Popconfirm
                 placement="left"
-                title={`Confirm deletion of sighting ${record.report_number}`}
+                title={`Confirm deletion of sighting ${record.reportNumber}`}
                 description="Are you sure you want to delete this sighting?"
                 okText="Yes"
                 onConfirm={async () => {
-                  await deleteSighting(record.report_number);
+                  await deleteSighting(record.reportNumber);
                   await fetchSightings(searchParams);
                 }}
                 cancelText="No">
@@ -125,7 +125,7 @@ export function SightingsTable() {
       <Table
         dataSource={sightings}
         columns={SIGHTINGS_COLUMNS}
-        rowKey={(record) => record.report_number}
+        rowKey={(record) => record.reportNumber}
         loading={isLoading}
         onChange={(pagination, filters, { order, field }) => {
           const newParams = {};

@@ -22,12 +22,12 @@ export function NewSightingPage() {
             onClick={() => {
               const payload = form.getFieldsValue();
               httpClient
-                .post(`/sightings/${payload.report_number}`, payload)
+                .post(`/sightings/${payload.reportNumber}`, payload)
                 .then(() => {
                   setIsFormDisabled(true);
                   notify(
                     'success',
-                    `Successfully created sighting with report number ${payload.report_number}`
+                    `Successfully created sighting with report number ${payload.reportNumber}`
                   );
                   setTimeout(() => {
                     navigate('/sightings');

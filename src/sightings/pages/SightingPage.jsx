@@ -44,7 +44,7 @@ export function SightingPage() {
           <Button
             type="primary"
             onClick={() => {
-              const { report_number: reportNumber, ...payload } = form.getFieldValue();
+              const { reportNumber: reportNumber, ...payload } = form.getFieldValue();
               updateSighting(reportNumber, payload);
             }}>
             Edit
