@@ -2,7 +2,7 @@ import { Button, Popconfirm, Space, Table, Tooltip } from 'antd';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { httpClient } from '../../common/httpClient';
-import { SightingsFilter } from '../components/SightingsFilter';
+import { SightingsFilter } from '../components';
 import { withPadding } from '../../common/hocs';
 import { DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import { useNotification } from '../../common/hooks/useNotification';

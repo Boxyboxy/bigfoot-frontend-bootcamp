@@ -1,50 +1,80 @@
-import { Form, Input, Skeleton } from 'antd';
-import TextArea from 'antd/es/input/TextArea';
-import { useMemo } from 'react';
+import { Form, Skeleton, Input } from 'antd';
+import { cloneElement, useMemo } from 'react';
 
-export function SightingForm({ form, isLoading, children, ...props }) {
-  const labelMapping = useMemo(
+export function SightingForm({ form, isLoading, disabled, isEditing, children, ...props }) {
+  const componentVariantHashmap = useMemo(
     () => ({
-      Year: 'year',
-      Month: 'month',
-      Date: 'date',
-      Location: 'location'
+      textarea: <Input.TextArea rows={8} />,
+      input: <Input />
     }),
     []
   );
 
+  const sightingFormFields = useMemo(
+    () => [
+      {
+        name: 'reportNumber',
+        label: 'Report Number',
+        variant: 'input',
+        disabled: disabled || !!form.getFieldValue('reportNumber')
+      },
+      {
+        name: 'year',
+        label: 'Year',
+        variant: 'input',
+        disabled
+      },
+      {
+        name: 'month',
+        label: 'Month',
+        variant: 'input',
+        disabled
+      },
+      {
+        name: 'date',
+        label: 'Date',
+        variant: 'input',
+        disabled
+      },
+      {
+        name: 'location',
+        label: 'Location',
+        variant: 'input',
+        disabled
+      },
+      {
+        name: 'observed',
+        label: 'Observed',
+        variant: 'textarea',
+        disabled
+      }
+    ],
+    [form, disabled]
+  );
+
   return (
-    <Form layout="horizontal" form={form} {...props}>
-      <Form.Item label={'Report Number'} name="reportNumber">
-        {isLoading ? (
-          <Skeleton.Input block active />
-        ) : (
-          <Input
-            value={form.getFieldValue('reportNumber')}
-            disabled={!!form.getFieldValue('reportNumber') || props.disabled}
-          />
-        )}
-      </Form.Item>
+    <>
+      <Form layout="horizontal" form={form} {...props}>
+        {sightingFormFields.map(({ name, label, variant, disabled }) => {
+          if (isLoading)
+            return (
+              <Form.Item label={label} key={name}>
+                <Skeleton.Input block active key={name} />
+              </Form.Item>
+            );
 
-      {Object.keys(labelMapping).map((label) => (
-        <Form.Item label={label} key={label} name={labelMapping[label]}>
-          {isLoading ? (
-            <Skeleton.Input key={label} block active />
+          return isEditing ? (
+            <Form.Item key={name} label={label} name={name}>
+              {cloneElement(componentVariantHashmap[variant], { disabled })}
+            </Form.Item>
           ) : (
-            <Input value={form.getFieldValue(labelMapping[label])} />
-          )}
-        </Form.Item>
-      ))}
-
-      <Form.Item label="Description" name="observed">
-        {isLoading ? (
-          <Skeleton.Input block active style={{ height: '186px' }} />
-        ) : (
-          <TextArea value={form.getFieldValue('observed')} rows={8} />
-        )}
-      </Form.Item>
-
+            <Form.Item key={name} label={label}>
+              {form.getFieldValue(name) || '-'}
+            </Form.Item>
+          );
+        })}
+      </Form>
       {children}
-    </Form>
+    </>
   );
 }

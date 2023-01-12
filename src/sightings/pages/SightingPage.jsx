@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { httpClient } from '../../common/httpClient';
 import { Button, Form, Space } from 'antd';
 import { withPadding } from '../../common/hocs';
-import { SightingForm } from '../components/SightingForm';
+import { SightingForm } from '../components';
 import { useNotification } from '../../common/hooks/useNotification';
 
 export function SightingPage() {
@@ -13,6 +13,7 @@ export function SightingPage() {
   const [form] = Form.useForm();
   const [isInvalidSighting, setIsInvalidSighting] = useState(false);
   const { notify, notifyContext } = useNotification();
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -32,6 +33,7 @@ export function SightingPage() {
       .then(({ data }) => {
         form.setFieldsValue(data);
         notify('success', 'Successfully updated sighting');
+        setIsEditing(false);
       })
       .catch((err) => notify('error', err?.response?.data?.error || err?.message));
   }, []);
@@ -39,19 +41,34 @@ export function SightingPage() {
   return withPadding(
     <>
       {notifyContext}
-      <SightingForm isLoading={isLoading} form={form} disabled={isInvalidSighting}>
+      <SightingForm
+        isLoading={isLoading}
+        form={form}
+        disabled={isInvalidSighting}
+        isEditing={isEditing}>
         <Space>
-          <Button
-            type="primary"
-            onClick={() => {
-              const { reportNumber: reportNumber, ...payload } = form.getFieldValue();
-              updateSighting(reportNumber, payload);
-            }}>
-            Edit
-          </Button>
-          <Button onClick={() => navigate(-1)} disabled={false}>
-            Back
-          </Button>
+          {isEditing ? (
+            <>
+              <Button
+                type="primary"
+                onClick={() => {
+                  const { reportNumber: reportNumber, ...payload } = form.getFieldValue();
+                  updateSighting(reportNumber, payload);
+                }}>
+                Save
+              </Button>
+              <Button onClick={() => setIsEditing(false)} disabled={false}>
+                Cancel
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button onClick={() => setIsEditing(true)} disabled={isLoading} type="primary">
+                Edit
+              </Button>
+              <Button onClick={() => navigate(-1)}>Back</Button>
+            </>
+          )}
         </Space>
       </SightingForm>
     </>

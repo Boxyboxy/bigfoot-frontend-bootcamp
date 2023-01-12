@@ -15,7 +15,7 @@ export function NewSightingPage() {
   return withPadding(
     <>
       {notifyContext}
-      <SightingForm form={form} disabled={isFormDisabled}>
+      <SightingForm form={form} disabled={isFormDisabled} isEditing={true}>
         <Space>
           <Button
             type="primary"
