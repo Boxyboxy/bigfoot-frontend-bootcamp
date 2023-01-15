@@ -17,14 +17,14 @@ export function SightingPage() {
   const { notify, notifyContext } = useNotification();
   const [isEditing, setIsEditing] = useState(false);
   const [comments, setComments] = useState([]);
-
+  const [sightingId, setSightingId] = useState(null);
   useEffect(() => {
     setIsLoading(true);
     httpClient
       .get(`/sightings/${reportNumber}`)
       .then(({ data }) => {
         form.setFieldsValue(data);
-
+        setSightingId(data.id);
         if (data.comments) setComments(data.comments);
       })
       .catch((err) => {
@@ -52,7 +52,8 @@ export function SightingPage() {
         isLoading={isLoading}
         form={form}
         disabled={isInvalidSighting}
-        isEditing={isEditing}>
+        isEditing={isEditing}
+        style={{ marginBottom: '2rem' }}>
         <Space>
           {isEditing ? (
             <>
@@ -79,7 +80,7 @@ export function SightingPage() {
         </Space>
       </SightingForm>
 
-      <SightingComments comments={comments} />
+      <SightingComments comments={comments} sightingId={sightingId} setComments={setComments} />
     </>
   );
 }

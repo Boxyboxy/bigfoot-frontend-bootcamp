@@ -73,8 +73,8 @@ export function SightingForm({ form, isLoading, disabled, isEditing, children, .
             </Form.Item>
           );
         })}
+        {children}
       </Form>
-      {children}
     </>
   );
 }

@@ -1,16 +1,42 @@
 import { Comment } from '@ant-design/compatible';
-import { formatDistance } from 'date-fns';
-import { Tooltip } from 'antd';
+import { formatDistance, format } from 'date-fns';
+import { Button, Form, Input, Tooltip } from 'antd';
+import { useCallback } from 'react';
+import { httpClient } from '../../common/httpClient';
+import { useNotification } from '../../common/hooks/useNotification';
 
-export function SightingComments({ comments }) {
+export function SightingComments({ comments, sightingId, setComments }) {
+  const [form] = Form.useForm();
+  // eslint-disable-next-line no-unused-vars
+  const { notify, notifyContext } = useNotification();
+
+  const createComment = useCallback(() => {
+    httpClient
+      .post(`/comments/${sightingId}`, { content: form.getFieldValue('new_comment') })
+      .then(({ data: newComment }) => {
+        notify('success', 'Created a new comment');
+        setComments([newComment, ...comments]);
+        form.resetFields();
+      });
+  }, [sightingId]);
+
   return (
     <>
+      <Form form={form} layout="inline" onSubmitCapture={createComment}>
+        <Form.Item name="new_comment">
+          <Input placeholder="Write a comment" style={{ minWidth: '400px' }} />
+        </Form.Item>
+
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
+      </Form>
       {comments.map((comment) => (
         <Comment
           key={comment.id}
           content={comment.content}
           datetime={
-            <Tooltip title={comment.createdAt}>
+            <Tooltip title={format(new Date(comment.createdAt), 'd MMM yy h.mm a')}>
               <span>
                 {formatDistance(new Date(comment.createdAt), new Date(), { addSuffix: true })}{' '}
               </span>
