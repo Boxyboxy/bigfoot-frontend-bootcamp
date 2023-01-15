@@ -19,9 +19,15 @@
   },
   "plugins": ["react"],
   "rules": {
-    "linebreak-style": ["error", "unix"],
+    "linebreak-style": ["error", "windows"],
     "semi": ["error", "always"],
     "react/react-in-jsx-scope": "off",
-    "react/prop-types": 0
+    "react/prop-types": 0,
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ]
   }
 }

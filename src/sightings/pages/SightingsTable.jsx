@@ -133,7 +133,7 @@ export function SightingsTable() {
             newParams[key] = value;
           }
           if (!order) delete newParams.sort;
-          else newParams.sort = [`${field.toLowerCase()}:${order}`];
+          else newParams.sort = [`${field}:${order}`];
           setSearchParams(newParams);
         }}
       />
