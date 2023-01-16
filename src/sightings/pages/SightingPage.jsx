@@ -7,6 +7,7 @@ import { SightingForm } from '../components';
 import { useNotification } from '../../common/hooks/useNotification';
 
 import { SightingComments } from '../components/SightingComments';
+import { LikeOutlined } from '@ant-design/icons';
 
 export function SightingPage() {
   const { reportNumber } = useParams();
@@ -18,6 +19,7 @@ export function SightingPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [comments, setComments] = useState([]);
   const [sightingId, setSightingId] = useState(null);
+  const [likes, setLikes] = useState(0);
   useEffect(() => {
     setIsLoading(true);
     httpClient
@@ -25,6 +27,7 @@ export function SightingPage() {
       .then(({ data }) => {
         form.setFieldsValue(data);
         setSightingId(data.id);
+        setLikes(data.likes.length);
         if (data.comments) setComments(data.comments);
       })
       .catch((err) => {
@@ -45,9 +48,19 @@ export function SightingPage() {
       .catch((err) => notify('error', err?.response?.data?.error || err?.message));
   }, []);
 
+  const likeSighting = useCallback(() => {
+    httpClient.post(`/likes/${sightingId}`).then(() => setLikes((likes) => ++likes));
+  }, [sightingId]);
+
   return withPadding(
     <>
       {notifyContext}
+      {!isLoading && (
+        <Button styte={{ marginBottom: '1rem' }} type="primary" onClick={likeSighting}>
+          <LikeOutlined /> {likes} Like(s)
+        </Button>
+      )}
+
       <SightingForm
         isLoading={isLoading}
         form={form}
