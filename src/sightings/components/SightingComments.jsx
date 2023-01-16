@@ -1,9 +1,10 @@
 import { Comment } from '@ant-design/compatible';
 import { formatDistance, format } from 'date-fns';
-import { Button, Form, Input, Tooltip } from 'antd';
+import { Button, Form, Input, Space, Tooltip } from 'antd';
 import { useCallback } from 'react';
 import { httpClient } from '../../common/httpClient';
 import { useNotification } from '../../common/hooks/useNotification';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
 export function SightingComments({ comments, sightingId, setComments }) {
   const [form] = Form.useForm();
@@ -18,7 +19,20 @@ export function SightingComments({ comments, sightingId, setComments }) {
         setComments([newComment, ...comments]);
         form.resetFields();
       });
-  }, [sightingId]);
+  }, [sightingId, comments]);
+
+  const deleteComment = useCallback(
+    (commentId, commentIndex) => {
+      httpClient.delete(`/comments/${commentId}`).then(() => {
+        notify('success', 'Deleted comment');
+        const newComments = [...comments];
+        console.log(newComments);
+        newComments.splice(commentIndex, 1);
+        setComments(newComments);
+      });
+    },
+    [comments]
+  );
 
   return (
     <>
@@ -31,8 +45,21 @@ export function SightingComments({ comments, sightingId, setComments }) {
           Submit
         </Button>
       </Form>
-      {comments.map((comment) => (
+      {comments.map((comment, index) => (
         <Comment
+          actions={[
+            <span key="comment-edit">
+              <Space>
+                <EditOutlined /> Edit
+              </Space>
+            </span>,
+
+            <span key="comment-delete" onClick={() => deleteComment(comment.id, index)}>
+              <Space>
+                <DeleteOutlined /> Delete
+              </Space>
+            </span>
+          ]}
           key={comment.id}
           content={comment.content}
           datetime={
