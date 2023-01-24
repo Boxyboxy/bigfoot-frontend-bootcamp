@@ -5,7 +5,6 @@ import { Button, Form, Space } from 'antd';
 import { withPadding } from '../../common/hocs';
 import { SightingForm } from '../components';
 import { useNotification } from '../../common/hooks/useNotification';
-
 import { SightingComments } from '../components/SightingComments';
 import { LikeOutlined } from '@ant-design/icons';
 
@@ -20,11 +19,16 @@ export function SightingPage() {
   const [comments, setComments] = useState([]);
   const [sightingId, setSightingId] = useState(null);
   const [likes, setLikes] = useState(0);
-  useEffect(() => {
-    setIsLoading(true);
+  const [categories, setCategories] = useState([]);
+  const [isFetchingSighting, setIsFetchingSighting] = useState(false);
+  const [isFetchingCategories, setIsFetchingCategories] = useState(false);
+
+  const fetchSighting = useCallback(() => {
+    setIsFetchingSighting(true);
     httpClient
       .get(`/sightings/${reportNumber}`)
       .then(({ data }) => {
+        data.categories = data.categories.map(({ id, name }) => ({ label: name, value: id }));
         form.setFieldsValue(data);
         setSightingId(data.id);
         setLikes(data.likes.length);
@@ -34,16 +38,32 @@ export function SightingPage() {
         setIsInvalidSighting(true);
         notify('error', err?.response?.data?.error || err?.message);
       })
-      .finally(() => setIsLoading(false));
-  }, [reportNumber]);
+      .finally(() => setIsFetchingSighting(false));
+  });
+
+  const fetchCategories = useCallback(() => {
+    setIsFetchingCategories(true);
+    httpClient
+      .get('/categories')
+      .then(({ data }) => {
+        console.log(data);
+        setCategories(
+          data.map(({ name, id }) => ({
+            label: name,
+            value: id
+          }))
+        );
+      })
+      .finally(() => setIsFetchingCategories(false));
+  });
 
   const updateSighting = useCallback((reportNumber, payload) => {
     httpClient
       .patch(`/sightings/${reportNumber}`, payload)
-      .then(({ data }) => {
-        form.setFieldsValue(data);
+      .then(() => {
         notify('success', 'Successfully updated sighting');
         setIsEditing(false);
+        fetchSighting();
       })
       .catch((err) => notify('error', err?.response?.data?.error || err?.message));
   }, []);
@@ -51,6 +71,15 @@ export function SightingPage() {
   const likeSighting = useCallback(() => {
     httpClient.post(`/likes/${sightingId}`).then(() => setLikes((likes) => ++likes));
   }, [sightingId]);
+
+  useEffect(() => {
+    fetchSighting();
+    fetchCategories();
+  }, [reportNumber]);
+
+  useEffect(() => {
+    setIsLoading(isFetchingCategories || isFetchingSighting);
+  }, [isFetchingCategories, isFetchingSighting]);
 
   return withPadding(
     <>
@@ -62,6 +91,7 @@ export function SightingPage() {
       )}
 
       <SightingForm
+        categories={categories}
         isLoading={isLoading}
         form={form}
         disabled={isInvalidSighting}

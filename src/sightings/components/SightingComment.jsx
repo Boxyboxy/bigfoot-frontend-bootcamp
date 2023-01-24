@@ -10,7 +10,9 @@ export function SightingComment({ comment, comments, setComments, commentIndex }
   const { notify, notifyContext } = useNotification();
   const [isEditing, setIsEditing] = useState(false);
   const [form] = Form.useForm();
-
+  // prevent memory leak: useCallback. Important when componant mounts and dismounts.
+  // reduce the amount of memory usage within the particular function
+  // caches function based on dependency array
   const deleteComment = useCallback(
     (commentId, commentIndex) => {
       httpClient.delete(`/comments/${commentId}`).then(() => {

@@ -1,61 +1,80 @@
-import { Form, Skeleton, Input } from 'antd';
-import { cloneElement, useMemo } from 'react';
+import { Form, Skeleton, Input, Select } from 'antd';
+import { useMemo } from 'react';
 
-export function SightingForm({ form, isLoading, disabled, isEditing, children, ...props }) {
-  const componentVariantHashmap = useMemo(
-    () => ({
-      textarea: <Input.TextArea rows={8} />,
-      input: <Input />
-    }),
-    []
-  );
-
+export function SightingForm({
+  form,
+  isLoading,
+  disabled,
+  isEditing,
+  children,
+  categories,
+  ...props
+}) {
+  console.log(categories);
   const sightingFormFields = useMemo(
     () => [
       {
         name: 'reportNumber',
         label: 'Report Number',
-        variant: 'input',
-        disabled: disabled || !!form.getFieldValue('reportNumber')
+        generateEditDisplay: () => (
+          <Input disabled={disabled || form.getFieldValue('reportNumber')} />
+        ),
+        generateDisplay: () => form.getFieldValue('reportNumber')
+      },
+      {
+        name: 'categories',
+        label: 'Categories',
+        generateEditDisplay: () => (
+          <Select
+            mode="multiple"
+            allowClear
+            placeholder="Select your categories"
+            options={categories}></Select>
+        ),
+        generateDisplay: () => {
+          const categories = form.getFieldValue('categories');
+          if (!categories) return '-';
+          return categories.map(({ label }) => label).join(', ');
+        }
       },
       {
         name: 'year',
         label: 'Year',
-        variant: 'input',
-        disabled
+        generateEditDisplay: () => <Input disabled={disabled} />,
+        generateDisplay: () => form.getFieldValue('year')
       },
       {
         name: 'month',
         label: 'Month',
-        variant: 'input',
-        disabled
+        generateEditDisplay: () => <Input disabled={disabled} />,
+        generateDisplay: () => form.getFieldValue('month')
       },
       {
         name: 'date',
         label: 'Date',
-        variant: 'input',
-        disabled
+        generateEditDisplay: () => <Input disabled={disabled} />,
+        generateDisplay: () => form.getFieldValue('date')
       },
       {
         name: 'location',
         label: 'Location',
-        variant: 'input',
-        disabled
+        generateEditDisplay: () => <Input disabled={disabled} />,
+        generateDisplay: () => form.getFieldValue('location')
       },
       {
         name: 'observed',
         label: 'Observed',
-        variant: 'textarea',
-        disabled
+        generateEditDisplay: () => <Input.TextArea disabled={disabled} rows={8} />,
+        generateDisplay: () => form.getFieldValue('observed')
       }
     ],
-    [form, disabled]
+    [form, disabled, categories]
   );
 
   return (
     <>
       <Form layout="horizontal" form={form} {...props}>
-        {sightingFormFields.map(({ name, label, variant, disabled }) => {
+        {sightingFormFields.map(({ label, name, generateEditDisplay, generateDisplay }) => {
           if (isLoading)
             return (
               <Form.Item label={label} key={name}>
@@ -63,13 +82,16 @@ export function SightingForm({ form, isLoading, disabled, isEditing, children, .
               </Form.Item>
             );
 
-          return isEditing ? (
-            <Form.Item key={name} label={label} name={name}>
-              {cloneElement(componentVariantHashmap[variant], { disabled })}
-            </Form.Item>
-          ) : (
+          if (isEditing)
+            return (
+              <Form.Item key={name} name={name} label={label}>
+                {generateEditDisplay()}
+              </Form.Item>
+            );
+
+          return (
             <Form.Item key={name} label={label}>
-              {form.getFieldValue(name) || '-'}
+              {generateDisplay() || '-'}
             </Form.Item>
           );
         })}
